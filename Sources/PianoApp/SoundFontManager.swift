@@ -12,10 +12,10 @@ final class SoundFontManager: ObservableObject {
     @Published fileprivate(set) var state: State = .checking
 
     private static let fileName = "SalC5Light2.sf2"
-    // Salamander Grand Piano V3 — recorded from a Yamaha C5 by Alexander Holm
-    // Source: https://freepats.zenvoid.org/Piano/acoustic-grand-piano.html
-    // Hosted on Google Drive by the original author
-    private static let downloadURL = "https://drive.google.com/uc?export=download&id=0B5gPxvwx-I4KWjZ2SHZOLU42dHM"
+    // Salamander Grand Piano — sampled from a Yamaha C5 grand piano by Alexander Holm
+    // SF2 conversion "Salamander C5 Light" by HED-Sounds
+    // Source: https://musical-artifacts.com/artifacts/483
+    private static let downloadURL = "https://github.com/knuton/piano-notes/raw/master/SalC5Light2.sf2"
     private static let expectedSHA256 = "f0c8cb73b87e1b3b1a190e9e37ace4668fb4fcfa381f94aac00178b72e68fca4"
 
     private var downloadTask: URLSessionDownloadTask?

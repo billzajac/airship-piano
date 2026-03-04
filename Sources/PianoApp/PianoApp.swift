@@ -15,13 +15,13 @@ struct PianoApp: App {
 
                 case .downloading(let progress):
                     VStack(spacing: 12) {
-                        Text("Downloading Piano Sound")
+                        Text("Downloading Yamaha C5 Grand Piano")
                             .font(.headline)
-                        Text("One-time download, ~24 MB")
+                        Text("Salamander sound font (~24 MB, one-time)")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         ProgressView(value: progress)
-                            .frame(width: 200)
+                            .frame(width: 240)
                         Text("\(Int(progress * 100))%")
                             .foregroundStyle(.secondary)
                             .monospacedDigit()
