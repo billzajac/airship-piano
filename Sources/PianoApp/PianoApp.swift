@@ -1,7 +1,14 @@
 import SwiftUI
 
+class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return true
+    }
+}
+
 @main
 struct PianoApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var soundFontManager = SoundFontManager()
     @StateObject private var midiManager = MIDIManager()
     @State private var audioEngine = AudioEngine()

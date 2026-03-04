@@ -16,9 +16,15 @@ If the download fails, the app falls back to the General MIDI piano built into m
 
 ## Install
 
-Download the latest `.dmg` from [Releases](../../releases), drag to Applications, done.
+1. Download the latest `.dmg` from [Releases](../../releases)
+2. Open the DMG and drag **Airship Piano** to **Applications**
+3. Double-click to launch — macOS will block it because it's not notarized
+4. Go to **System Settings → Privacy & Security**, scroll down, and click **Open Anyway**
+5. Click **Open** in the confirmation dialog
 
-Or build from source:
+After that first launch, macOS remembers your choice and the app opens normally.
+
+### Build from source
 
 ```
 git clone https://github.com/billzajac/airship-piano.git

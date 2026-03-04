@@ -93,8 +93,6 @@ rm -f "$DMG_PATH" "$DMG_RW"
 rm -rf "$DMG_TMP"
 mkdir -p "$DMG_TMP"
 cp -R "$APP_DIR" "$DMG_TMP/"
-# Don't add Applications symlink here — we create a Finder alias below
-# so it gets the proper Applications folder icon
 
 # Create read-write HFS+ DMG
 hdiutil create -volname "$VOLNAME" \
@@ -121,7 +119,6 @@ tell application "Finder"
         set viewOptions to the icon view options of container window
         set icon size of viewOptions to 128
         set arrangement of viewOptions to not arranged
-        -- Create a real Finder alias (not a symlink) so the icon renders correctly
         make new alias file at container window to POSIX file "/Applications" with properties {name:"Applications"}
         delay 1
         set position of item "$APP_NAME.app" of container window to {140, 190}
@@ -136,6 +133,16 @@ APPLESCRIPT
 # Wait for .DS_Store to be flushed
 sync
 sleep 2
+
+# Set the Applications folder icon on the alias
+swift - "/Volumes/$VOLNAME/Applications" << 'ICONSWIFT'
+import AppKit
+import Foundation
+let target = CommandLine.arguments[1]
+let icon = NSWorkspace.shared.icon(forFile: "/Applications")
+icon.size = NSSize(width: 512, height: 512)
+NSWorkspace.shared.setIcon(icon, forFile: target)
+ICONSWIFT
 
 # Clean up metadata
 rm -rf "/Volumes/$VOLNAME/.fseventsd" "/Volumes/$VOLNAME/.Trashes"
