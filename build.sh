@@ -78,21 +78,33 @@ echo ""
 echo "Built: $APP_DIR"
 echo ""
 
-# Create DMG
+# Create DMG with proper layout
 DMG_PATH="$BUILD_DIR/JustPlayPiano.dmg"
 rm -f "$DMG_PATH"
 
-DMG_TMP="$BUILD_DIR/dmg-tmp"
-rm -rf "$DMG_TMP"
-mkdir -p "$DMG_TMP"
-cp -R "$APP_DIR" "$DMG_TMP/"
-ln -s /Applications "$DMG_TMP/Applications"
-
-hdiutil create -volname "Just Play Piano" \
-    -srcfolder "$DMG_TMP" \
-    -ov -format UDZO \
-    "$DMG_PATH" 2>&1
-
-rm -rf "$DMG_TMP"
+if command -v create-dmg &> /dev/null; then
+    create-dmg \
+        --volname "Just Play Piano" \
+        --window-pos 200 120 \
+        --window-size 540 380 \
+        --icon-size 128 \
+        --icon "$APP_NAME.app" 140 190 \
+        --app-drop-link 400 190 \
+        --no-internet-enable \
+        "$DMG_PATH" \
+        "$APP_DIR" 2>&1
+else
+    echo "Note: install create-dmg (brew install create-dmg) for a polished DMG layout"
+    DMG_TMP="$BUILD_DIR/dmg-tmp"
+    rm -rf "$DMG_TMP"
+    mkdir -p "$DMG_TMP"
+    cp -R "$APP_DIR" "$DMG_TMP/"
+    ln -s /Applications "$DMG_TMP/Applications"
+    hdiutil create -volname "Just Play Piano" \
+        -srcfolder "$DMG_TMP" \
+        -ov -format UDZO \
+        "$DMG_PATH" 2>&1
+    rm -rf "$DMG_TMP"
+fi
 
 echo "DMG: $DMG_PATH"
