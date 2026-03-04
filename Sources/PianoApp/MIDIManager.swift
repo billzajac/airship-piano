@@ -15,7 +15,7 @@ final class MIDIManager: ObservableObject {
         started = true
         self.audioEngine = audioEngine
 
-        var status = MIDIClientCreateWithBlock("JustPlayPiano" as CFString, &midiClient) { [weak self] notification in
+        var status = MIDIClientCreateWithBlock("AirshipPiano" as CFString, &midiClient) { [weak self] notification in
             self?.handleMIDINotification(notification)
         }
         guard status == noErr else {

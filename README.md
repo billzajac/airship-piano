@@ -1,4 +1,4 @@
-# Just Play Piano
+# Airship Piano
 
 Sometimes you just want to play the piano.
 
@@ -10,7 +10,7 @@ That's what this is. A tiny macOS app that connects to your MIDI keyboard and pl
 
 This app uses the [Salamander Grand Piano](https://freepats.zenvoid.org/Piano/acoustic-grand-piano.html), a free sample library recorded from a Yamaha C5 grand piano by Alexander Holm. It's distributed as an SF2 sound font — a format that maps real recorded samples across the keyboard so each note sounds like an actual piano, not a synthesizer.
 
-The SF2 file (~24MB) isn't bundled with the app. On first launch, it downloads automatically from the [Salamander project's distribution](https://freepats.zenvoid.org/Piano/acoustic-grand-piano.html) and caches in `~/Library/Application Support/JustPlayPiano/`. After that, it loads instantly.
+The SF2 file (~24MB) isn't bundled with the app. On first launch, it downloads automatically from the [Salamander project's distribution](https://freepats.zenvoid.org/Piano/acoustic-grand-piano.html) and caches in `~/Library/Application Support/AirshipPiano/`. After that, it loads instantly.
 
 If the download fails, the app falls back to the General MIDI piano built into macOS — functional but not nearly as nice.
 
@@ -21,8 +21,8 @@ Download the latest `.dmg` from [Releases](../../releases), drag to Applications
 Or build from source:
 
 ```
-git clone https://github.com/billzajac/just-play-piano.git
-cd just-play-piano
+git clone https://github.com/billzajac/airship-piano.git
+cd airship-piano
 ./run.sh
 ```
 
@@ -36,7 +36,7 @@ cd just-play-piano
 Requires Swift 5.9+ (comes with Xcode 15+).
 
 ```
-./build.sh          # creates JustPlayPiano.app in build/
+./build.sh          # creates AirshipPiano.app in build/
 ./run.sh            # build and run directly
 ```
 

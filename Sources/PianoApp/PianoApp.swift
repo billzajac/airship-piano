@@ -15,7 +15,7 @@ struct PianoApp: App {
 
                 case .downloading(let progress):
                     VStack(spacing: 12) {
-                        Text("Downloading Piano Sounds")
+                        Text("Downloading Piano Sound")
                             .font(.headline)
                         Text("One-time download, ~24 MB")
                             .font(.caption)
@@ -69,7 +69,7 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Text("Piano")
+            Text("Airship Piano")
                 .font(.largeTitle.bold())
 
             if midiManager.connectedDevices.isEmpty {

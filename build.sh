@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-APP_NAME="Just Play Piano"
+APP_NAME="Airship Piano"
 EXECUTABLE="PianoApp"
 BUILD_DIR="build"
 APP_DIR="$BUILD_DIR/$APP_NAME.app"
@@ -32,11 +32,11 @@ cat > "$CONTENTS/Info.plist" << PLIST
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>Just Play Piano</string>
+    <string>Airship Piano</string>
     <key>CFBundleDisplayName</key>
-    <string>Just Play Piano</string>
+    <string>Airship Piano</string>
     <key>CFBundleIdentifier</key>
-    <string>com.billzajac.justplaypiano</string>
+    <string>com.billzajac.airshippiano</string>
     <key>CFBundleVersion</key>
     <string>$VERSION</string>
     <key>CFBundleShortVersionString</key>
@@ -79,12 +79,12 @@ echo "Built: $APP_DIR"
 echo ""
 
 # Create DMG with proper layout
-DMG_PATH="$BUILD_DIR/JustPlayPiano.dmg"
+DMG_PATH="$BUILD_DIR/AirshipPiano.dmg"
 rm -f "$DMG_PATH"
 
 if command -v create-dmg &> /dev/null; then
     create-dmg \
-        --volname "Just Play Piano" \
+        --volname "Airship Piano" \
         --window-pos 200 120 \
         --window-size 540 380 \
         --icon-size 128 \
@@ -100,7 +100,7 @@ else
     mkdir -p "$DMG_TMP"
     cp -R "$APP_DIR" "$DMG_TMP/"
     ln -s /Applications "$DMG_TMP/Applications"
-    hdiutil create -volname "Just Play Piano" \
+    hdiutil create -volname "Airship Piano" \
         -srcfolder "$DMG_TMP" \
         -ov -format UDZO \
         "$DMG_PATH" 2>&1
