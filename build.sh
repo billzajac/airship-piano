@@ -78,7 +78,10 @@ echo ""
 echo "Built: $APP_DIR"
 echo ""
 
-# Create DMG with baked-in layout (no Finder scripting, no blinking)
+# Create DMG with baked-in Finder layout
+# Uses HFS+ (not APFS) so .DS_Store works reliably with Finder.
+# Layout is set via osascript at BUILD time — the blink happens here,
+# not when the user opens the DMG.
 DMG_PATH="$BUILD_DIR/AirshipPiano.dmg"
 DMG_TMP="$BUILD_DIR/dmg-tmp"
 DMG_RW="$BUILD_DIR/rw.dmg"
@@ -90,95 +93,47 @@ mkdir -p "$DMG_TMP"
 cp -R "$APP_DIR" "$DMG_TMP/"
 ln -s /Applications "$DMG_TMP/Applications"
 
-# Create a read-write DMG, set layout via .DS_Store, then convert to compressed
+# Create read-write HFS+ DMG
 hdiutil create -volname "$VOLNAME" \
     -srcfolder "$DMG_TMP" \
     -ov -format UDRW \
+    -fs HFS+ \
     -size 10m \
     "$DMG_RW" 2>&1
 
-# Mount the RW image and bake in the Finder layout
-DEVICE=$(hdiutil attach "$DMG_RW" -mountpoint "/Volumes/$VOLNAME" -nobrowse 2>&1 | head -1 | awk '{print $1}')
-MOUNT_DIR="/Volumes/$VOLNAME"
+# Mount and let Finder bake in the layout
+DEVICE=$(hdiutil attach "$DMG_RW" 2>&1 | grep "/Volumes/" | head -1 | cut -f1 | tr -d '[:space:]')
 
-# Write .DS_Store with icon positions and window settings using Python
-python3 - "$MOUNT_DIR" "$APP_NAME" << 'PYDS'
-import struct, sys, os
+echo "Configuring DMG layout (Finder will briefly flash)..."
+osascript << APPLESCRIPT
+tell application "Finder"
+    tell disk "$VOLNAME"
+        open
+        set current view of container window to icon view
+        set toolbar visible of container window to false
+        set statusbar visible of container window to false
+        set the bounds of container window to {200, 120, 740, 500}
+        set viewOptions to the icon view options of container window
+        set icon size of viewOptions to 128
+        set arrangement of viewOptions to not arranged
+        set position of item "$APP_NAME.app" of container window to {140, 190}
+        set position of item "Applications" of container window to {400, 190}
+        close
+    end tell
+end tell
+APPLESCRIPT
 
-mount = sys.argv[1]
-app_name = sys.argv[2] + ".app"
+# Wait for .DS_Store to be flushed
+sync
+sleep 2
 
-# Minimal .DS_Store that sets:
-# - Window size 540x380, icon size 128, icon view
-# - App icon at (140, 190), Applications alias at (400, 190)
-# This is a pre-built binary .DS_Store blob
-
-# Use the ds_store Python library if available, otherwise write a basic one
-try:
-    from ds_store import DSStore
-    with DSStore.open(os.path.join(mount, ".DS_Store"), "w+") as d:
-        d["."]["bwsp"] = {
-            "ShowStatusBar": False,
-            "WindowBounds": "{{200, 120}, {540, 380}}",
-            "ShowPathbar": False,
-            "ShowToolbar": False,
-            "ShowTabView": False,
-            "ShowSidebar": False,
-        }
-        d["."]["icvp"] = {
-            "viewOptionsVersion": 1,
-            "backgroundType": 0,
-            "backgroundColorRed": 1.0,
-            "backgroundColorGreen": 1.0,
-            "backgroundColorBlue": 1.0,
-            "gridOffsetX": 0.0,
-            "gridOffsetY": 0.0,
-            "gridSpacing": 100.0,
-            "iconSize": 128.0,
-            "textSize": 13.0,
-            "labelOnBottom": True,
-            "showItemInfo": False,
-            "showIconPreview": True,
-            "arrangeBy": "none",
-        }
-        d[app_name]["Iloc"] = (140, 190)
-        d["Applications"]["Iloc"] = (400, 190)
-    print("DS_Store written via ds_store library")
-except ImportError:
-    # Fallback: use Finder via osascript but with -nobrowse so no visible window
-    import subprocess
-    subprocess.run(["osascript", "-e", f'''
-        tell application "Finder"
-            tell disk "{os.path.basename(mount)}"
-                open
-                set current view of container window to icon view
-                set toolbar visible of container window to false
-                set statusbar visible of container window to false
-                set the bounds of container window to {{200, 120, 740, 500}}
-                set viewOptions to the icon view options of container window
-                set icon size of viewOptions to 128
-                set arrangement of viewOptions to not arranged
-                set position of item "{app_name}" of container window to {{140, 190}}
-                set position of item "Applications" of container window to {{400, 190}}
-                close
-            end tell
-        end tell
-    '''], check=False)
-    # Wait for .DS_Store to be written
-    import time
-    time.sleep(1)
-    print("DS_Store written via Finder (fallback)")
-PYDS
-
-# Remove .fseventsd and Trashes
-rm -rf "$MOUNT_DIR/.fseventsd" "$MOUNT_DIR/.Trashes"
+# Clean up metadata
+rm -rf "/Volumes/$VOLNAME/.fseventsd" "/Volumes/$VOLNAME/.Trashes"
 
 # Unmount
-sync
-sleep 1
-hdiutil detach "$DEVICE" -force 2>&1
+hdiutil detach "$DEVICE" 2>&1
 
-# Convert to compressed read-only DMG
+# Convert to compressed read-only DMG (this is what gets distributed)
 hdiutil convert "$DMG_RW" -format UDZO -o "$DMG_PATH" 2>&1
 rm -f "$DMG_RW"
 rm -rf "$DMG_TMP"
