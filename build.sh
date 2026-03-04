@@ -21,8 +21,9 @@ rm -rf "$APP_DIR"
 mkdir -p "$CONTENTS/MacOS"
 mkdir -p "$CONTENTS/Resources"
 
-# Copy executable
+# Copy executable and icon
 cp "$EXEC_PATH" "$CONTENTS/MacOS/$EXECUTABLE"
+cp Resources/AppIcon.icns "$CONTENTS/Resources/AppIcon.icns"
 
 # Create Info.plist
 cat > "$CONTENTS/Info.plist" << PLIST
@@ -50,6 +51,8 @@ cat > "$CONTENTS/Info.plist" << PLIST
     <true/>
     <key>LSApplicationCategoryType</key>
     <string>public.app-category.music</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
 </dict>
 </plist>
 PLIST
