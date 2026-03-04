@@ -1,26 +1,52 @@
-# Piano
+# Just Play Piano
 
-A minimal macOS app that turns your MIDI keyboard into a piano using the Salamander Grand Piano sound font.
+Sometimes you just want to play the piano.
+
+GarageBand is great, but when you sit down at your MIDI keyboard and just want to *play*, you don't want to open a DAW, pick a project, configure a track, and find the right instrument. You want to press keys and hear a piano.
+
+That's what this is. A tiny macOS app that connects to your MIDI keyboard and plays piano. Nothing else.
+
+## The Sound
+
+This app uses the [Salamander Grand Piano](https://freepats.zenvoid.org/Piano/acoustic-grand-piano.html), a free sample library recorded from a Yamaha C5 grand piano by Alexander Holm. It's distributed as an SF2 sound font — a format that maps real recorded samples across the keyboard so each note sounds like an actual piano, not a synthesizer.
+
+The SF2 file (~24MB) isn't bundled with the app. On first launch, it downloads automatically from the [Salamander project's distribution](https://freepats.zenvoid.org/Piano/acoustic-grand-piano.html) and caches in `~/Library/Application Support/JustPlayPiano/`. After that, it loads instantly.
+
+If the download fails, the app falls back to the General MIDI piano built into macOS — functional but not nearly as nice.
+
+## Install
+
+Download the latest `.dmg` from [Releases](../../releases), drag to Applications, done.
+
+Or build from source:
+
+```
+git clone https://github.com/billzajac/just-play-piano.git
+cd just-play-piano
+./run.sh
+```
 
 ## Requirements
 
 - macOS 13+
-- Swift 5.9+ toolchain (comes with Xcode 15+)
-- A MIDI keyboard
+- A MIDI keyboard (USB or Bluetooth)
 
-## Run
+## Building from source
+
+Requires Swift 5.9+ (comes with Xcode 15+).
 
 ```
-git clone <repo-url>
-cd piano
-./run.sh
+./build.sh          # creates JustPlayPiano.app in build/
+./run.sh            # build and run directly
 ```
-
-On first launch, the app downloads the Salamander Grand Piano SF2 (~24MB) and caches it in `~/Library/Application Support/PianoApp/`. Subsequent launches load instantly.
 
 ## Features
 
-- Auto-detects MIDI devices (hot-plug supported)
-- Sustain pedal support (CC 64)
+- Plug in and play — auto-detects MIDI devices, including hot-plug
+- Sustain pedal support
 - Volume control
-- Falls back to macOS General MIDI if the sound font download fails
+- That's it
+
+## License
+
+MIT

@@ -19,7 +19,7 @@ final class SoundFontManager: ObservableObject {
 
     private static var appSupportDir: URL {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        return base.appendingPathComponent("PianoApp")
+        return base.appendingPathComponent("JustPlayPiano")
     }
 
     static var soundFontURL: URL {
