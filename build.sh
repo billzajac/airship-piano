@@ -144,6 +144,10 @@ icon.size = NSSize(width: 512, height: 512)
 NSWorkspace.shared.setIcon(icon, forFile: target)
 ICONSWIFT
 
+# Set volume icon (survives download — unlike fileicon on the .dmg file)
+cp Resources/AppIcon.icns "/Volumes/$VOLNAME/.VolumeIcon.icns"
+SetFile -a C "/Volumes/$VOLNAME"
+
 # Clean up metadata
 rm -rf "/Volumes/$VOLNAME/.fseventsd" "/Volumes/$VOLNAME/.Trashes"
 
