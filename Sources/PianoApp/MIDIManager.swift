@@ -184,9 +184,9 @@ final class MIDIManager: ObservableObject {
             }
             self.deviceGroups = newGroups
 
-            // Clear notes for removed devices
-            if !removedUIDs.isEmpty {
-                // Notes from removed devices are already gone since we rebuild from scratch
+            // Pre-create samplers for new devices so first note plays instantly
+            for group in newGroups {
+                let _ = self.audioEngine?.sampler(for: group.deviceName)
             }
         }
     }

@@ -290,29 +290,31 @@ struct DeviceRow: View {
                 Spacer()
 
                 // Transpose controls
-                HStack(spacing: 2) {
+                HStack(spacing: 4) {
                     Button {
                         midiManager.setTranspose(for: group.deviceName, offset: group.transpose - 1)
                     } label: {
-                        Image(systemName: "minus")
-                            .font(.system(size: 8, weight: .bold))
-                            .frame(width: 16, height: 16)
+                        Image(systemName: "minus.circle.fill")
+                            .font(.system(size: 14))
+                            .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
+                    .contentShape(Rectangle())
 
                     Text(group.transpose == 0 ? "0" : (group.transpose > 0 ? "+\(group.transpose)" : "\(group.transpose)"))
-                        .font(.system(size: 10, weight: .medium, design: .monospaced))
+                        .font(.system(size: 11, weight: .medium, design: .monospaced))
                         .foregroundStyle(group.transpose == 0 ? .tertiary : .primary)
-                        .frame(width: 24)
+                        .frame(width: 26)
 
                     Button {
                         midiManager.setTranspose(for: group.deviceName, offset: group.transpose + 1)
                     } label: {
-                        Image(systemName: "plus")
-                            .font(.system(size: 8, weight: .bold))
-                            .frame(width: 16, height: 16)
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 14))
+                            .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
+                    .contentShape(Rectangle())
                 }
             }
 
