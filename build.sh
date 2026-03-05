@@ -155,4 +155,7 @@ hdiutil convert "$DMG_RW" -format UDZO -o "$DMG_PATH" 2>&1
 rm -f "$DMG_RW"
 rm -rf "$DMG_TMP"
 
+# Set custom icon on the DMG file itself
+fileicon set "$DMG_PATH" Resources/AppIcon.icns
+
 echo "DMG: $DMG_PATH"

@@ -66,6 +66,23 @@ struct PianoApp: App {
             }
         }
         .defaultSize(width: 360, height: 260)
+        .commands {
+            CommandGroup(replacing: .appInfo) {
+                Button("About Airship Piano") {
+                    NSApplication.shared.orderFrontStandardAboutPanel(options: [
+                        .applicationName: "Airship Piano",
+                        .applicationVersion: "1.0.0",
+                        .credits: NSAttributedString(
+                            string: "A lightweight, open-source MIDI program that lets you just play your MIDI keyboard.\n\nhttps://github.com/billzajac/airship-piano",
+                            attributes: [
+                                .font: NSFont.systemFont(ofSize: 11),
+                                .foregroundColor: NSColor.textColor
+                            ]
+                        )
+                    ])
+                }
+            }
+        }
     }
 }
 
