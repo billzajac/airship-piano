@@ -16,10 +16,34 @@ final class AudioEngine {
     init() {
         #if os(iOS)
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try AVAudioSession.sharedInstance().setCategory(
+                .playback,
+                mode: .default,
+                options: [.allowBluetoothA2DP]
+            )
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             print("Failed to configure audio session: \(error)")
+        }
+
+        // Restart engine when audio route changes (e.g. Bluetooth speaker connects)
+        NotificationCenter.default.addObserver(
+            forName: AVAudioSession.routeChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.handleRouteChange()
+        }
+        // Restart engine after interruptions (phone calls, etc.)
+        NotificationCenter.default.addObserver(
+            forName: AVAudioSession.interruptionNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let info = notification.userInfo,
+                  let typeValue = info[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  AVAudioSession.InterruptionType(rawValue: typeValue) == .ended else { return }
+            self?.handleRouteChange()
         }
         #endif
     }
@@ -33,6 +57,22 @@ final class AudioEngine {
             print("Failed to start audio engine: \(error)")
         }
     }
+
+    #if os(iOS)
+    private func handleRouteChange() {
+        guard engineStarted else { return }
+        // Engine stops on route change; restart it
+        if !engine.isRunning {
+            do {
+                try AVAudioSession.sharedInstance().setActive(true)
+                try engine.start()
+                print("Audio engine restarted after route change")
+            } catch {
+                print("Failed to restart audio engine: \(error)")
+            }
+        }
+    }
+    #endif
 
     /// Get or create a sampler for a given device
     func sampler(for device: String) -> AVAudioUnitSampler {
