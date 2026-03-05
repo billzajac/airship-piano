@@ -1,6 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
+ENV_FILE="$HOME/home/airship-piano.env"
+if [ -f "$ENV_FILE" ]; then
+    source "$ENV_FILE"
+fi
+
 SCHEME="AirshipPiano-iOS"
 PROJECT="AirshipPiano.xcodeproj"
 CONFIG="${1:-Debug}"
@@ -9,7 +14,7 @@ BUILD_DIR="build/ios"
 echo "Building Airship Piano for iOS ($CONFIG)..."
 
 # Find connected iOS device
-DEVICE_ID=$(xcrun devicectl list devices 2>/dev/null | grep "available" | grep -v "Watch\|iPad" | head -1 | awk '{for(i=1;i<=NF;i++) if($i ~ /^[0-9A-F]{8}-/) print $i}')
+DEVICE_ID=$(xcrun devicectl list devices 2>/dev/null | grep -E "connected|available" | grep -v "Watch\|iPad" | head -1 | awk '{for(i=1;i<=NF;i++) if($i ~ /^[0-9A-F]{8}-/) print $i}')
 
 if [ -z "$DEVICE_ID" ]; then
     echo "Error: No available iPhone found. Make sure your iPhone is plugged in and unlocked."
@@ -34,6 +39,10 @@ xcodebuild \
     -configuration "$CONFIG" \
     -destination "generic/platform=iOS" \
     -derivedDataPath "$BUILD_DIR" \
+    -allowProvisioningUpdates \
+    ${APPLE_CONNECT_PRIVATE_KEY_PATH:+-authenticationKeyPath "$APPLE_CONNECT_PRIVATE_KEY_PATH"} \
+    ${APPLE_CONNECT_API_KEY:+-authenticationKeyID "$APPLE_CONNECT_API_KEY"} \
+    ${APPLE_CONNECT_API_ISSUER_ID:+-authenticationKeyIssuerID "$APPLE_CONNECT_API_ISSUER_ID"} \
     build \
     2>&1 | tail -5
 

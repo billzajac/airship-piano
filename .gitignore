@@ -4,3 +4,6 @@ build/
 *.sf2
 *.dmg
 xcuserdata/
+*.xcarchive
+*.ipa
+*.env
