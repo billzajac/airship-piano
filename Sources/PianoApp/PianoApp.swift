@@ -245,8 +245,23 @@ struct ContentView: View {
                     BluetoothMIDIView()
                 }
                 #endif
+
+                // Version + GitHub link
+                Link(destination: URL(string: "https://github.com/billzajac/airship-piano")!) {
+                    HStack(spacing: 4) {
+                        Text("v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?")")
+                            .font(.system(size: 9, weight: .medium, design: .monospaced))
+                        Image(systemName: "chevron.left.forwardslash.chevron.right")
+                            .font(.system(size: 8, weight: .semibold))
+                        Text("Open Source")
+                            .font(.system(size: 9, weight: .medium, design: .rounded))
+                    }
+                    .foregroundStyle(.quaternary)
+                    .padding(.top, 6)
+                }
+                .buttonStyle(.plain)
             }
-            .padding(.bottom, 14)
+            .padding(.bottom, 10)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
