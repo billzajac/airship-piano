@@ -76,6 +76,9 @@ else
     exit 1
 fi
 
+# Clean to ensure entitlements and settings are fresh
+xcodebuild clean -project "$PROJECT" -scheme "AirshipPiano-iOS" -scheme "AirshipPiano-macOS" 2>&1 | tail -1
+
 # ─── Step 3: Archive & Upload iOS ────────────────────────────────────────────
 
 echo ""
